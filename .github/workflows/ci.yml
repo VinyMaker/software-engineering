@@ -3,7 +3,7 @@ name: CI Automático
 on:
   push:
     branches:
-      - main  # ou a branch que você usa
+      - main
 
 jobs:
   build:
@@ -12,7 +12,7 @@ jobs:
       - name: Baixar código
         uses: actions/checkout@v3
 
-      - name: Configurar Node (exemplo)
+      - name: Configurar Node
         uses: actions/setup-node@v3
         with:
           node-version: '18'
