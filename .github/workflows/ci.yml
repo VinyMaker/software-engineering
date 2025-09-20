@@ -24,4 +24,4 @@ jobs:
         run: npm test
 
       - name: Finalizado
-        run: echo "Pipeline concluído!"
+        run: echo "Pipeline concluído! :)"
