@@ -1,4 +1,4 @@
-#Sistema Simples De Gestão De Notas De Alunos - Sisigna :)
+#Sistema Simples De Gestão De Notas De Alunos - Sisigna :O
 #1ª parte:
 # Cadastro de Notas:
 # • O sistema deve permitir que o usuário insira as notas dos alunos.
