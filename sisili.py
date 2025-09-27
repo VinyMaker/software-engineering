@@ -43,6 +43,8 @@ def buscar_livro_por_titulo(biblioteca, titulo_procurado): #função para buscar
     if not encontrado: #só mostrará se nenhum resultado foi localizado
         print(f"Nenhum resultado para '{titulo_procurado}' encontrado na biblioteca.")
 
+#4ª parte:
+# Definição e Formulação do Gráfico de Gêneros dos Livros
 def gerar_grafico_por_genero(biblioteca): #função para gerar um gráfico por gênero de livros da biblioteca
     print(f"\nGerando gráfico por gênero da biblioteca...")
     contagem_de_generos = {} #inicializa o dicionário para contar os gêneros da biblioteca
