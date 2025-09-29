@@ -1,0 +1,82 @@
+#ML - Classificação de Flores Iris com TensorFlow
+print("-------------- Passo 1: Importar Bibliotecas e Carregar Dados --------------")
+print("-------------- avisos informativos do TensorFlow  --------------")
+# Passo 1: Importar Bibliotecas e Carregar Dados
+import tensorflow as tf  # Biblioteca para construção e treino de modelos de machine learning
+import pandas as pd  # Biblioteca para manipulação de dados em tabelas (DataFrames)
+from sklearn.datasets import load_iris  # Função para carregar o conjunto de dados Iris
+from sklearn.model_selection import train_test_split  # Função para dividir os dados em treino e teste
+from sklearn.preprocessing import StandardScaler  # Para normalizar os dados (deixar na mesma escala)
+
+# Carregar conjunto de dados Iris
+dados_iris = load_iris(as_frame=True)  # Carrega o dataset Iris como DataFrame pandas
+caracteristicas = dados_iris.data  # Seleciona apenas as colunas de características (inputs)
+especies = dados_iris.target  # Seleciona a coluna alvo, correspondente à espécie (output)
+print("-----------------------------------------------------------------------------")
+print(f"                    Amostra dos dados do Dataset Iris:")
+print(caracteristicas.head()) #primeiras linhas do dataset
+print(f"      Espécies possíveis de Íris:", dados_iris.target_names)  #Espécies possíveis de Iris
+print("-----------------------------------------------------------------------------")
+print("                -------------- FIM DO PASSO 1 --------------")
+print("\n------------------ Passo 2: Pré-processamento dos Dados -------------------")
+# Passo 2: Pré-processamento dos Dados
+carac_treino, carac_teste, esp_treino, esp_teste = train_test_split(
+    caracteristicas,  # entradas (features)
+    especies,         # saídas (rótulos das espécies)
+    test_size=0.2,    # 20% para teste, 80% para treino (padrão comum)
+    random_state=42)   # semente para garantir os mesmos resultados se rodar de novo
+
+normalizador = StandardScaler()  # Cria um normalizador (converte os dados para média 0 e desvio 1)
+carac_treino_normalizado = normalizador.fit_transform(carac_treino)  # Ajusta e transforma os dados de treino
+carac_teste_normalizado = normalizador.transform(carac_teste)        # Transforma os dados de teste com o mesmo padrão
+
+print("Tamanhos dos conjuntos ----> Treino:", carac_treino_normalizado.shape, " ----> Teste:", carac_teste_normalizado.shape)
+print("          -------------- FIM DO PASSO 2 --------------")
+
+print("\n-------------- Passo 3: Construir o Modelo --------------")
+# Passo 3: Construir o Modelo
+print("-------------- aviso sobre instruções da CPU do TensorFlow  --------------")
+modelo = tf.keras.Sequential([
+    tf.keras.layers.Input(shape=(4,)),
+    tf.keras.layers.Dense(8, activation='relu'),  #primeira camada oculta com 8 neurônios e função ReLU: ajuda na eficiência
+    tf.keras.layers.Dense(8, activation='relu'), #segunda camada oculta com 8 neurônios e função ReLU: ajuda na eficiência
+    tf.keras.layers.Dense(3, activation='softmax')]) #camada de saída, 3 neurônios (uma para cada espécie)
+
+modelo.compile(
+    optimizer='adam', #otimizador Adam, indicado por ser eficiente para essas tarefas
+    loss='sparse_categorical_crossentropy', #"perda" apropriada para classificação de categoria
+    metrics=['accuracy']) #métrica de avaliação: acurácia/"precisão"
+print("-------------- FIM DO PASSO 3 --------------")
+
+print("\n-------------- Passo 4: Treinar o Modelo --------------")
+# Passo 4: Treinar o Modelo
+historico = modelo.fit(
+    carac_treino_normalizado, #entrada do treino normalizado
+    esp_treino, #classe de saída do treino
+    epochs=100, #100 "ciclos" de treinamento (vezes que os dados passarão pelo modelo)
+    verbose=0) #verbosidade '0' para não exibir todas as barras de progresso
+
+print(f"Deu tudo certo, treinamento finalizado!")
+print("-------------- FIM DO PASSO 4 --------------")
+print("\n-------------- Passo 5: Avaliar o Modelo --------------")
+# Passo 5: Avaliar o Modelo
+perda, acuracia = modelo.evaluate(carac_teste_normalizado, esp_teste, verbose=0)  # Avalia o modelo nos dados de teste
+print(f"Precisão do modelo no conjunto de teste: {acuracia:.2%}")  #acertos no teste (em %)
+print("-------------- FIM DO PASSO 5 --------------")
+print("\n-------------- Passo 6: Fazer Previsões --------------")
+# Passo 6: Fazer Previsões
+novos_exemplos = pd.DataFrame({  # Novos exemplos para testar o modelo (valores fictícios)
+    'sepal length (cm)': [5.3, 6.0, 6.9], #
+    'sepal width (cm)': [3.0, 2.2, 3.1],
+    'petal length (cm)': [1.5, 4.0, 5.4],
+    'petal width (cm)': [0.2, 1.0, 2.1]})
+
+novos_exemplos_normalizados = normalizador.transform(novos_exemplos)  #normaliza os novos exemplos com o mesmo padrão treinado
+resultados = modelo.predict(novos_exemplos_normalizados) #previsão de probabilidades para cada espécie
+classes_previstas = resultados.argmax(axis=1) #seleciona a espécie mais provável para cada exemplo
+print("----------------------------")
+print("Previsão das espécies dos novos exemplos:")
+for i, classe in enumerate(classes_previstas):
+    print(f"Exemplo {i+1}: {dados_iris.target_names[classe]}")  # Mostra o nome da espécie prevista para cada exemplo
+print("-------------- FIM DO PASSO 6 --------------")
+print("FIM DO PROGRAMA")
