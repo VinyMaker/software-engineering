@@ -4,7 +4,6 @@ Bem-vindo! Este repositório reúne os principais códigos, projetos, trabalhos 
 
 Sobre
 Curso: Engenharia de Software
-Instituição: [Nome da sua instituição]
 Autor: Vinícius “VinyMaker” Azevedo
 
 Conteúdo:
